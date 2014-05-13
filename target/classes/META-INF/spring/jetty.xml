@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   					   http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="jettyServer" class="org.eclipse.jetty.server.Server" 
+		  lazy-init="false" init-method="start" destroy-method="stop">
+		<property name="handler" ref="jettyContextHandler" />
+		<property name="threadPool" ref="jettyServerThreadPool" />
+		<property name="connectors">
+			<list><ref bean="jettyServerChannelConnector" /></list>
+		</property>
+	</bean>
+    
+    <bean id="jettyServerChannelConnector" class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+        <property name="acceptors" value="2"/>
+        <property name="port" value="8080"/>
+        <property name="maxIdleTime" value="30000"/>
+        <property name="threadPool" ref="jettyServerThreadPool"/>
+    </bean>
+    
+    <bean id="jettyServerThreadPool" class="org.eclipse.jetty.util.thread.QueuedThreadPool">
+        <property name="minThreads" value="2"/>
+        <property name="maxThreads" value="64"/>
+        <property name="maxQueued" value="128"/>
+        <property name="name" value="jetty-"/>
+    </bean>
+
+	<bean id="jettyContextHandler" class="com.ruslan.magaz.util.AwareServletContextHandler">
+		<property name="resourceBase" value="." />
+		<property name="contextPath" value="/" />
+		<property name="sessionHandler">
+			<bean class="org.eclipse.jetty.server.session.SessionHandler" />
+		</property>
+		<property name="servletHandler">
+			<bean class="org.eclipse.jetty.servlet.ServletHandler">
+				<property name="servlets">
+					<list>
+						<bean class="org.eclipse.jetty.servlet.ServletHolder">
+							<property name="name" value="DispatcherServlet" />
+							<property name="servlet">
+								<bean class="org.springframework.web.servlet.DispatcherServlet" />
+							</property>
+							<property name="initParameters">
+								<map>
+									<entry key="contextConfigLocation" value="classpath:META-INF/spring/jetty-web-context.xml" />
+								</map>
+							</property>
+						</bean>
+					</list>
+				</property>
+				
+				<property name="filters">
+					<list>
+						<bean class="org.eclipse.jetty.servlet.FilterHolder">
+							<property name="name" value="DispatcherFilter" />
+							<property name="filter">
+								<bean class="org.springframework.web.filter.DelegatingFilterProxy" />
+							</property>
+						</bean>
+					</list>
+				</property>
+				
+				<property name="servletMappings">
+					<list>
+						<bean class="org.eclipse.jetty.servlet.ServletMapping">
+							<property name="pathSpecs">
+								<list>
+									<value>/*</value>
+								</list>
+							</property>
+							<property name="servletName" value="DispatcherServlet" />
+						</bean>
+					</list>
+				</property>
+				
+				<property name="filterMappings">
+					<list>
+						<bean class="org.eclipse.jetty.servlet.FilterMapping">
+							<property name="pathSpecs">
+								<list>
+									<value>/*</value>
+								</list>
+							</property>
+							<property name="filterName" value="DispatcherFilter" />
+						</bean>
+					</list>
+				</property>
+            </bean>
+            
+		</property>
+	</bean>
+
+</beans>
