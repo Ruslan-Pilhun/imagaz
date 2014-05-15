@@ -51,16 +51,7 @@
 					</list>
 				</property>
 				
-				<property name="filters">
-					<list>
-						<bean class="org.eclipse.jetty.servlet.FilterHolder">
-							<property name="name" value="DispatcherFilter" />
-							<property name="filter">
-								<bean class="org.springframework.web.filter.DelegatingFilterProxy" />
-							</property>
-						</bean>
-					</list>
-				</property>
+
 				
 				<property name="servletMappings">
 					<list>
@@ -75,18 +66,6 @@
 					</list>
 				</property>
 				
-				<property name="filterMappings">
-					<list>
-						<bean class="org.eclipse.jetty.servlet.FilterMapping">
-							<property name="pathSpecs">
-								<list>
-									<value>/*</value>
-								</list>
-							</property>
-							<property name="filterName" value="DispatcherFilter" />
-						</bean>
-					</list>
-				</property>
             </bean>
             
 		</property>

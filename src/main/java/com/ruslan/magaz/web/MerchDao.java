@@ -9,11 +9,13 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.ruslan.magaz.Item;
+import com.ruslan.magaz.Order;
 import com.ruslan.magaz.User;
 
 public class MerchDao {
     private static final String ITEM_SEL_QUERY = "SELECT id, name, description, category, price, count FROM Merchandise";
     private static final String USER_SEL_QUERY = "SELECT id, login, password, role FROM Users WHERE login = ?";
+    private static final String ORDER_SEL_QUERY = "select orders.orderid, users.login, orders.merchid, orders.count, orders.date, orders.status from orders join users on orders.userid = users.id where orderid = ? and users.login = '?'";
     private final JdbcOperations jdbc;
     
     @Autowired
@@ -37,6 +39,25 @@ public class MerchDao {
         });
         
     }
+    
+    public Item getItemById(int id){
+        return jdbc.queryForObject(ITEM_SEL_QUERY + "where id = ?",new RowMapper<Item>(){
+            @Override
+            public Item mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Item anItem = new Item();
+                anItem.setId(rs.getInt("id"));
+                anItem.setName(rs.getString("name"));
+                anItem.setDescription(rs.getString("description"));
+                anItem.setCategory(rs.getString("category"));
+                anItem.setPrice(rs.getDouble("price"));
+                anItem.setCount(rs.getInt("count"));
+                return anItem;
+            }
+        },
+        id);
+        
+    }
+    
     public User getUserByLogin(String login){
         return jdbc.queryForObject(USER_SEL_QUERY, new RowMapper<User>(){
             @Override
@@ -50,6 +71,22 @@ public class MerchDao {
             }
         }, 
         login);
+    }
+    
+    public Order getOrderById(String orderId, String login){
+    	private Order anOrder = new Order();
+    	
+    	return jdbc.query(USER_SEL_QUERY, new  RowCallbackHandler(){
+            @Override
+            public Order processRow(ResultSet rs) throws SQLException {
+                anOrder.setId(rs.getInt("id"));
+                anOrder.setLogin(rs.getString("login"));
+                anOrder.setPassword(rs.getString("password"));
+                anOrder.setRole(rs.getString("role"));
+            }
+        }, 
+        orderId, login);	
+    	
     }
     
 }
