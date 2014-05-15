@@ -29,12 +29,16 @@ public class Order {
 	public void setItemList(List<ItemTuple> itemList) {
 		this.itemList = itemList;
 	}
-	public void AddToItemList(Item item) {
+	public void addToItemList(Item item) {
+		addToItemList(item, 1);
+	}
+	
+	public void addToItemList(Item item, int count) {
 		boolean added = false;
 		for (ItemTuple tuple:itemList){
 			if (item.equals(tuple.item)){
 				itemList.remove(tuple);
-				ItemTuple newTuple = new ItemTuple(item, tuple.count+1);
+				ItemTuple newTuple = new ItemTuple(item, tuple.count+count);
 				itemList.add(newTuple);
 				added = true;
 				break;
@@ -59,7 +63,7 @@ public class Order {
 	public OrderStatus getStatus() {
 		return status;
 	}
-	public void setStatusList(OrderStatus status) {
+	public void setStatus(OrderStatus status) {
 		this.status = status;
 	}
 	public Date getOrderDate() {

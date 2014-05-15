@@ -79,10 +79,12 @@ public class MerchDao {
     	return jdbc.query(USER_SEL_QUERY, new  RowCallbackHandler(){
             @Override
             public Order processRow(ResultSet rs) throws SQLException {
+            	
                 anOrder.setId(rs.getInt("id"));
-                anOrder.setLogin(rs.getString("login"));
-                anOrder.setPassword(rs.getString("password"));
+                anOrder.setUser(rs.getString("login"));
+                anOrder.setStatus(rs.getString("password"));
                 anOrder.setRole(rs.getString("role"));
+                anOrder.addToItemList()
             }
         }, 
         orderId, login);	
