@@ -9,7 +9,7 @@ public class Order {
 	int id;
 	User user;
 	List<ItemTuple> itemList;
-	OrderStatus status;
+	List<OrderStatus> statusList;
 	Date orderDate;
 	public int getId() {
 		return id;
@@ -60,12 +60,16 @@ public class Order {
 		return false;
 	}
 	
-	public OrderStatus getStatus() {
-		return status;
+	public List<OrderStatus> getStatusList() {
+		return statusList;
 	}
-	public void setStatus(OrderStatus status) {
-		this.status = status;
+	public void setStatusList(List<OrderStatus> statusList) {
+		this.statusList = statusList;
 	}
+	public void addToStatusList(OrderStatus status)	{
+		statusList.add(status);
+	}
+	
 	public Date getOrderDate() {
 		return orderDate;
 	}

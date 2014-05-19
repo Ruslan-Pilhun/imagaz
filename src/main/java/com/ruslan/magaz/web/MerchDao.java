@@ -6,16 +6,21 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.ruslan.magaz.Item;
 import com.ruslan.magaz.Order;
+import com.ruslan.magaz.OrderStatus;
 import com.ruslan.magaz.User;
 
 public class MerchDao {
     private static final String ITEM_SEL_QUERY = "SELECT id, name, description, category, price, count FROM Merchandise";
     private static final String USER_SEL_QUERY = "SELECT id, login, password, role FROM Users WHERE login = ?";
-    private static final String ORDER_SEL_QUERY = "select orders.orderid, users.login, orders.merchid, orders.count, orders.date, orders.status from orders join users on orders.userid = users.id where orderid = ? and users.login = '?'";
+    private static final String USER_SEL_QUERY_ID = "SELECT id, login, password, role FROM Users WHERE id = ?";
+    private static final String ORDER_SEL_QUERY = "select orderdate, userid, status from orders where orderid = ?";
+    private static final String ORDERED_SEL_QUERY = "select merchid, count from ordered where orderid = ?";
+    private static final String ORDERSTATUS_SEL_QUERY = "select statusdate, statusplace, status from orderstatuses where orderid = ?";
     private final JdbcOperations jdbc;
     
     @Autowired
@@ -73,22 +78,55 @@ public class MerchDao {
         login);
     }
     
-    public Order getOrderById(String orderId, String login){
-    	private Order anOrder = new Order();
-    	
-    	return jdbc.query(USER_SEL_QUERY, new  RowCallbackHandler(){
+    public User getUserById(int id){
+        return jdbc.queryForObject(USER_SEL_QUERY_ID, new RowMapper<User>(){
             @Override
-            public Order processRow(ResultSet rs) throws SQLException {
-            	
-                anOrder.setId(rs.getInt("id"));
-                anOrder.setUser(rs.getString("login"));
-                anOrder.setStatus(rs.getString("password"));
-                anOrder.setRole(rs.getString("role"));
-                anOrder.addToItemList()
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User anUser = new User();
+                anUser.setId(rs.getInt("id"));
+                anUser.setLogin(rs.getString("login"));
+                anUser.setPassword(rs.getString("password"));
+                anUser.setRole(rs.getString("role"));
+                return anUser;
             }
         }, 
-        orderId, login);	
+        id);
+    }
+    
+    public Order getOrderById(final int orderId){
+    	final Order anOrder = new Order();
     	
+    	jdbc.query(ORDER_SEL_QUERY, new  RowCallbackHandler(){
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+            	User anUser = getUserById(rs.getInt("userid"));
+                anOrder.setId(orderId);
+                anOrder.setUser(anUser);
+                anOrder.setOrderDate(rs.getDate("orderdate"));
+            }
+        }, 
+        orderId);
+    	
+    	jdbc.query(ORDERED_SEL_QUERY, new  RowCallbackHandler(){
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+            	Item anItem = getItemById(rs.getInt("merchid"));
+            	int count = rs.getInt("count");
+                anOrder.addToItemList(anItem, count);
+            }
+        }, 
+        orderId);	
+    	
+    	jdbc.query(ORDERSTATUS_SEL_QUERY, new  RowCallbackHandler(){
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+            	OrderStatus status = new OrderStatus(rs.getDate("statusdate"), rs.getString("statusplace"), rs.getString("status"));
+                anOrder.addToStatusList(status);
+            }
+        }, 
+        orderId);	
+    	
+    	return anOrder;
     }
     
 }
