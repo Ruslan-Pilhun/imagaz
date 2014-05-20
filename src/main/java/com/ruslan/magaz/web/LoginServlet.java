@@ -32,9 +32,9 @@ public class LoginServlet{
         this.mDao = mDao;
     }
     
-    @RequestMapping(value="/log")
+    @RequestMapping(value="/login")
     public @ResponseBody
-    void logIn(HttpServletRequest req, HttpServletResponse res, @RequestParam("login") String login, @RequestParam("password") String password) throws ServletException, IOException{
+    void logIn(HttpServletRequest req, HttpServletResponse res, @RequestParam("j_username") String login, @RequestParam("j_password") String password) throws ServletException, IOException{
         
         // TODO Auto-generated method stub
         //String login = @RequestParam("login") String login;

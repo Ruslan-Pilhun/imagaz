@@ -7,5 +7,6 @@
 	<import resource="classpath:META-INF/spring/spring-dao.xml" />
 	<import resource="classpath:META-INF/spring/jetty.xml" />
 	<import resource="classpath:META-INF/spring/spring_services.xml" />
+	<import resource="classpath:META-INF/spring/spring_security.xml" />
 
 </beans>

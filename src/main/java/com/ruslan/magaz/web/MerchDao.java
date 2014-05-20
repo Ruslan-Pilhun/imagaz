@@ -18,7 +18,7 @@ public class MerchDao {
     private static final String ITEM_SEL_QUERY = "SELECT id, name, description, category, price, count FROM Merchandise";
     private static final String USER_SEL_QUERY = "SELECT id, login, password, role FROM Users WHERE login = ?";
     private static final String USER_SEL_QUERY_ID = "SELECT id, login, password, role FROM Users WHERE id = ?";
-    private static final String ORDER_SEL_QUERY = "select orderdate, userid, status from orders where orderid = ?";
+    private static final String ORDER_SEL_QUERY = "select orderdate, userid from orders where id = ?";
     private static final String ORDERED_SEL_QUERY = "select merchid, count from ordered where orderid = ?";
     private static final String ORDERSTATUS_SEL_QUERY = "select statusdate, statusplace, status from orderstatuses where orderid = ?";
     private final JdbcOperations jdbc;
@@ -46,7 +46,7 @@ public class MerchDao {
     }
     
     public Item getItemById(int id){
-        return jdbc.queryForObject(ITEM_SEL_QUERY + "where id = ?",new RowMapper<Item>(){
+        return jdbc.queryForObject(ITEM_SEL_QUERY + " where id = ?",new RowMapper<Item>(){
             @Override
             public Item mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Item anItem = new Item();
