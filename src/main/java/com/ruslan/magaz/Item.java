@@ -6,7 +6,7 @@ public class Item {
     private String category;
     private String description;
     private double price;
-    private int count;
+    private int stock;
     
     
     public int getId() {
@@ -39,27 +39,20 @@ public class Item {
     public void setPrice(double price) {
         this.price = price;
     }
-    public int getCount() {
-        return count;
+    public int getStock() {
+        return stock;
     }
-    public void setCount(int count) {
-        this.count = count;
+    public void setStock(int stock) {
+        this.stock = stock;
     }
     @Override
     public String toString(){
-        return " id: "+id+" name: "+name+" description: "+description+" category: "+category+" price: "+price+" count: "+count;
+        return " id: "+id+" name: "+name+" description: "+description+" category: "+category+" price: "+price+" count: "+stock;
     }
-    
-}
-
-class ItemTuple{
-	public final Item item;
-	public final int count;
-	public ItemTuple(Item item, int count) {
-		this.item = item;
-		this.count = count;
-	}
-	public String toString(){
-		return "("+item+", "+count+")";
-	}
+    public boolean equals(Item anotherItem){
+    	if (getId() == anotherItem.getId()){
+    		return true;
+    	}
+    	else return false;
+    }
 }

@@ -1,5 +1,6 @@
 package com.ruslan.magaz;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,8 +9,8 @@ public class Order {
 
 	int id;
 	User user;
-	List<ItemTuple> itemList;
-	List<OrderStatus> statusList;
+	Cart cart;
+	List<OrderStatus> statusList = new ArrayList<OrderStatus>();
 	Date orderDate;
 	public int getId() {
 		return id;
@@ -23,43 +24,12 @@ public class Order {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	public List<ItemTuple> getItemList() {
-		return itemList;
+	public Cart getCart() {
+		return cart;
 	}
-	public void setItemList(List<ItemTuple> itemList) {
-		this.itemList = itemList;
+	public void setCart(Cart cart) {
+		this.cart = cart;
 	}
-	public void addToItemList(Item item) {
-		addToItemList(item, 1);
-	}
-	
-	public void addToItemList(Item item, int count) {
-		boolean added = false;
-		for (ItemTuple tuple:itemList){
-			if (item.equals(tuple.item)){
-				itemList.remove(tuple);
-				ItemTuple newTuple = new ItemTuple(item, tuple.count+count);
-				itemList.add(newTuple);
-				added = true;
-				break;
-			}
-		}
-		if (!added){
-			ItemTuple newTuple = new ItemTuple(item, 1);
-			itemList.add(newTuple);
-		}
-	}
-	
-	public boolean RemoveFromItemList(Item item){
-		for (ItemTuple tuple:itemList){
-			if (item.equals(tuple.item)){
-				itemList.remove(tuple);
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public List<OrderStatus> getStatusList() {
 		return statusList;
 	}

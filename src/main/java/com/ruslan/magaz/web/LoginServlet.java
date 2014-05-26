@@ -4,6 +4,7 @@ import java.io.IOException;
 
 
 
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.ruslan.magaz.Cart;
 import com.ruslan.magaz.User;
 @Controller
 public class LoginServlet{
@@ -43,7 +45,8 @@ public class LoginServlet{
         if (password.equals(thisUser.getPassword())){
             //HttpServletRequest httpReq = (HttpServletRequest) req;
             HttpSession session = req.getSession(true);
-            session.setAttribute("role", thisUser.getRole());
+            session.setAttribute("user", thisUser);
+            session.setAttribute("cart", new Cart());
             (res).setStatus(200);
         }else{
             (res).sendError(403);
